@@ -60,8 +60,8 @@ public class Answer extends BaseTime {
         this.contents = contents;
     }
 
-    public boolean isOwner(User writer) {
-        return this.writer.equals(writer);
+    public boolean isNotOwner(User writer) {
+        return !this.writer.equals(writer);
     }
 
     public void toQuestion(Question question) {
@@ -76,11 +76,11 @@ public class Answer extends BaseTime {
     }
 
     public DeleteHistory delete(User loginUser) throws CannotDeleteException {
-        if (isOwner(loginUser)) {
-            this.deleted = true;
-            return new DeleteHistory(ANSWER, id, loginUser);
+        if (isNotOwner(loginUser)) {
+            throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
         }
-        throw new CannotDeleteException("답변을 삭제할 권한이 없습니다.");
+        this.deleted = true;
+        return new DeleteHistory(ANSWER, id, loginUser);
     }
 
     public Long getId() {
